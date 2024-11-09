@@ -8,9 +8,9 @@ TOKEN = os.getenv("TELEGRAM_TOKEN")
 def obtener_saludo():
     hora_actual = datetime.now().hour
     if 6 <= hora_actual < 18:
-        return "🌞 Bueeeenaaa"
+        return "🌞 Bueeeena, mi queriidx"
     else:
-        return "🌚 Bueeeenaaa"
+        return "🌚 Bueeeena, mi queriidx"
 
 async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for nuevo in update.message.new_chat_members:
@@ -18,7 +18,7 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
         saludo = obtener_saludo()
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text=f"{saludo}, {username}! 🦭🦭🦭"
+            text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
         )
         try:
             with open('porlas.mp3', 'rb') as audio_file:
