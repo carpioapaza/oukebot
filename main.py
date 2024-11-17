@@ -9,6 +9,8 @@ TOKEN = os.getenv("TELEGRAM_TOKEN")
 AUDIOS = {
     "porlas": "audios/porlas.mp3",
     "oño": "audios/oño.mp3",
+    "glogloglo": "audios/glogloglo.mp3",
+    "sisoy": "audios/sisoy.mp3",
 }
 
 # STICKERS = {
@@ -16,10 +18,10 @@ AUDIOS = {
 #     "jaja": "CAACAgIAAxkBAAICZ2ABnOesTxpO7wWR9XGHIUJm1_IAArwAA4tLBAQ"
 # }
 
-GIFS = {
-    "roro": "https://tenor.com/bngj7.gif",
-    "fallo": "https://media.giphy.com/media/3o6ZsWGMzscC8yqnIY/giphy.gif"
-}
+# GIFS = {
+#     "roro": "https://tenor.com/bngj7.gif",
+#     "fallo": "https://media.giphy.com/media/3o6ZsWGMzscC8yqnIY/giphy.gif"
+# }
 
 def obtener_saludo():
     hora_actual = datetime.now().hour
@@ -59,15 +61,15 @@ async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE
             except Exception as e:
                 await update.message.reply_text(f"❌ Error al enviar el audio: {e}")
     
-    for palabra, sticker_id in STICKERS.items():
-        if palabra in mensaje:
-            await context.bot.send_sticker(chat_id=update.effective_chat.id, sticker=sticker_id)
-            return
+    # for palabra, sticker_id in STICKERS.items():
+    #     if palabra in mensaje:
+    #         await context.bot.send_sticker(chat_id=update.effective_chat.id, sticker=sticker_id)
+    #         return
 
-    for palabra, gif_url in GIFS.items():
-        if palabra in mensaje:
-            await context.bot.send_animation(chat_id=update.effective_chat.id, animation=gif_url)
-            return
+    # for palabra, gif_url in GIFS.items():
+    #     if palabra in mensaje:
+    #         await context.bot.send_animation(chat_id=update.effective_chat.id, animation=gif_url)
+    #         return
 
 application = ApplicationBuilder().token(TOKEN).build()
 
