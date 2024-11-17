@@ -16,10 +16,10 @@ AUDIOS = {
 #     "jaja": "CAACAgIAAxkBAAICZ2ABnOesTxpO7wWR9XGHIUJm1_IAArwAA4tLBAQ"
 # }
 
-# GIFS = {
-#     "epico": "https://media.giphy.com/media/l41lIsBbP1W1TWr1i/giphy.gif",
-#     "fallo": "https://media.giphy.com/media/3o6ZsWGMzscC8yqnIY/giphy.gif"
-# }
+GIFS = {
+    "roro": "https://tenor.com/bngj7.gif",
+    "fallo": "https://media.giphy.com/media/3o6ZsWGMzscC8yqnIY/giphy.gif"
+}
 
 def obtener_saludo():
     hora_actual = datetime.now().hour
