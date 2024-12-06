@@ -7,10 +7,11 @@ TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 # Diccionarios de recursos estáticos
 AUDIOS = {
-    "porlas": "audios/porlas.mp3",
-    "oño": "audios/oño.mp3",
-    "glogloglo": "audios/glogloglo.mp3",
-    "sisoy": "audios/sisoy.mp3",
+    ("porlas",): "audios/porlas.mp3",
+    ("oño",): "audios/oño.mp3",
+    ("glogloglo",): "audios/glogloglo.mp3",
+    ("sisoy",): "audios/sisoy.mp3",
+    ("relaxo", "pobre"): "audios/relaxo.mp3"  
 }
 
 # STICKERS = {
