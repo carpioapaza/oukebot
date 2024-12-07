@@ -72,6 +72,48 @@ async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE
     #         await context.bot.send_animation(chat_id=update.effective_chat.id, animation=gif_url)
     #         return
 
+async def es_admin(update: Update, context: ContextTypes.DEFAULT_TYPE) -> bool:
+    """Verifica si el usuario que ejecuta el comando es administrador."""
+    chat_id = update.effective_chat.id
+    user_id = update.effective_user.id
+
+    # Obtener la lista de administradores del grupo
+    administradores = await context.bot.get_chat_administrators(chat_id)
+    admin_ids = [admin.user.id for admin in administradores]
+
+    return user_id in admin_ids
+
+async def exportar_miembros(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not await es_admin(update, context):
+        await update.message.reply_text("Confianzudo, oñioo")
+        return
+
+    chat_id = update.effective_chat.id
+    try:
+        miembros = await context.bot.get_chat_members_count(chat_id)
+        data = []
+
+        for miembro in miembros:
+            usuario = miembro.user
+            data.append({
+                "ID": usuario.id,
+                "Nombre": usuario.first_name,
+                "Apellido": usuario.last_name or "",
+                "Usuario": f"@{usuario.username}" if usuario.username else "N/A"
+            })
+
+        df = pd.DataFrame(data)
+        archivo_excel = "oukenidos.xlsx"
+        df.to_excel(archivo_excel, index=False)
+
+        with open(archivo_excel, "rb") as archivo:
+            await context.bot.send_document(chat_id=chat_id, document=archivo, filename=archivo_excel)
+
+    except Exception as e:
+        await update.message.reply_text(f"Inténtalo neuvamente bebé: {e}")
+
+
+
 application = ApplicationBuilder().token(TOKEN).build()
 
 application.add_handler(
@@ -79,6 +121,9 @@ application.add_handler(
 )
 application.add_handler(
     MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido)
+)
+application.add_handler(
+    CommandHandler("exportar_miembros", exportar_miembros)
 )
 
 application.run_polling()
