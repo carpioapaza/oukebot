@@ -123,7 +123,7 @@ application.add_handler(
     MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido)
 )
 application.add_handler(
-    CommandHandler("exportar_miembros", exportar_miembros)
+    CommandHandler("exportar_oukenidos", exportar_miembros)
 )
 
 application.run_polling()
