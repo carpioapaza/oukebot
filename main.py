@@ -35,9 +35,19 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
     for nuevo in update.message.new_chat_members:
         username = f"@{nuevo.username}" if nuevo.username else nuevo.first_name
         saludo = obtener_saludo()
+        # Mensaje de bienvenida
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
+        )
+        await context.bot.send_message(
+            chat_id=update.effective_chat.id,
+            text=(
+                "⚠️ *IMPORTANTE: ¡Uno para todos y todos para uno!.* ⚠️\n\n"
+                "❌ NO Contenido pornográfico, ricou 🍆\n"
+                "❌ NO spamees pa tu grupo pes 😠\n\n"
+            ),
+            parse_mode="Markdown"
         )
         try:
             with open('Si, eres.mp3', 'rb') as audio_file:
@@ -47,6 +57,7 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
         except Exception as e:
             print(f"Error al enviar audio: {e}")
+
 
 async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     mensaje = update.message.text.lower()
