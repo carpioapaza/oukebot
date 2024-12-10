@@ -84,6 +84,28 @@ async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE
     #         return
 
 
+async def broma_muerte(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    chat_id = update.effective_chat.id
+
+    # Mensaje de "broma" antes de desactivar el bot
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text=(
+            "De tanto ingreso de dibujitos, el bot no pudo más... y ha muerto. 🦭🦭💀 MEEEEEEE\n\n"
+        ),
+        parse_mode="Markdown"
+    )
+
+    # Esperar 24 horas antes de reactivar
+    await asyncio.sleep(24 * 60 * 60)
+
+    # Mensaje de reactivación (opcional)
+    await context.bot.send_message(
+        chat_id=chat_id,
+        text="🛠️ *El oño-bot ha revivió.* Iso fálalo! 🎉",
+        parse_mode="Markdown"
+    )
+
 
 
 application = ApplicationBuilder().token(TOKEN).build()
@@ -94,6 +116,8 @@ application.add_handler(
 application.add_handler(
     MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido)
 )
+application.add_handler(CommandHandler("pausar_bot", broma_muerte))
+
 
 
 application.run_polling()
