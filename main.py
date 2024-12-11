@@ -43,15 +43,15 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
             chat_id=update.effective_chat.id,
             text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
         )
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=(
-                "⚠️ *IMPORTANTE: ¡Uno para todos y todos para uno!.* ⚠️\n\n"
-                "❌ NO Contenido pornográfico, ricou 🍆\n"
-                "❌ NO spamees pa tu grupo pes 😠\n\n"
-            ),
-            parse_mode="Markdown",
-        )
+        # await context.bot.send_message(
+        #     chat_id=update.effective_chat.id,
+        #     text=(
+        #         "⚠️ *IMPORTANTE: ¡Uno para todos y todos para uno!.* ⚠️\n\n"
+        #         "❌ NO Contenido pornográfico, ricou 🍆\n"
+        #         "❌ NO spamees pa tu grupo pes 😠\n\n"
+        #     ),
+        #     parse_mode="Markdown",
+        # )
         # Enviar audio de bienvenida
         try:
             with open('Si, eres.mp3', 'rb') as audio_file:
