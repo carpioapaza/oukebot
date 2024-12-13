@@ -23,6 +23,8 @@ AUDIOS = {
     "melo": "audios/chumbi.mp3",
 }
 
+miembros_existentes = set()
+
 # Funciones auxiliares
 def obtener_saludo() -> str:
     """Obtiene un saludo dependiendo de la hora actual."""
@@ -40,10 +42,10 @@ async def cargar_miembros_existentes(application):
     try:
         chat_members = await application.bot.get_chat_administrators(chat_id)
         miembros_existentes = {member.user.id for member in chat_members}
+        print(f"Miembros existentes cargados: {miembros_existentes}")
     except Exception as e:
         print(f"Error al cargar miembros existentes: {e}")
 
-# Handlers
 async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Envía un mensaje de bienvenida a los nuevos miembros del grupo."""
     for nuevo in update.message.new_chat_members:
@@ -73,7 +75,6 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=update.effective_chat.id,
                 text="⚠️ Audio de bienvenida no encontrado."
             )
-
 
 async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Responde a mensajes con audios si contienen palabras clave."""
@@ -132,17 +133,22 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 # Configuración de la aplicación
-application = ApplicationBuilder().token(TOKEN).build()
+async def main():
+    application = ApplicationBuilder().token(TOKEN).build()
 
-# Registro de handlers
-application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, bienvenida))
-application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido))
-application.add_handler(CommandHandler("matar", broma_muerte))
+    # Cargar miembros existentes
+    await cargar_miembros_existentes(application)
 
-# Registro de manejador de errores
-application.add_error_handler(error_handler)
+    # Registro de handlers
+    application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, bienvenida))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido))
+    application.add_handler(CommandHandler("matar", broma_muerte))
 
-# Ejecutar el bot
-# Ejecutar el bot
+    # Registro de manejador de errores
+    application.add_error_handler(error_handler)
+
+    # Ejecutar el bot
+    await application.run_polling()
+
 if __name__ == "__main__":
-    application.run_polling(before_start=cargar_miembros_existentes(application))
+    asyncio.run(main())
