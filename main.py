@@ -32,26 +32,34 @@ def obtener_saludo() -> str:
         return "🌚 Bueeeena, mi queriidx"
 
 # Handlers
+async def cargar_miembros_existentes(application):
+    """Carga los IDs de los miembros existentes al iniciar el bot."""
+    global miembros_existentes
+    chat_id = "<ID_DEL_GRUPO>"  # Reemplaza con el ID del grupo donde está el bot
+    try:
+        chat_members = await application.bot.get_chat_administrators(chat_id)
+        miembros_existentes = {member.user.id for member in chat_members}
+    except Exception as e:
+        print(f"Error al cargar miembros existentes: {e}")
+
+# Handlers
 async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Envía un mensaje de bienvenida a los nuevos miembros del grupo."""
     for nuevo in update.message.new_chat_members:
+        if nuevo.id in miembros_existentes:
+            continue  # Evitar saludar a miembros ya registrados
+
+        # Registrar al nuevo miembro en la lista
+        miembros_existentes.add(nuevo.id)
+
         username = f"@{nuevo.username}" if nuevo.username else nuevo.first_name
         saludo = obtener_saludo()
-        
+
         # Mensajes de bienvenida
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
         )
-        # await context.bot.send_message(
-        #     chat_id=update.effective_chat.id,
-        #     text=(
-        #         "⚠️ *IMPORTANTE: ¡Uno para todos y todos para uno!.* ⚠️\n\n"
-        #         "❌ NO Contenido pornográfico, ricou 🍆\n"
-        #         "❌ NO spamees pa tu grupo pes 😠\n\n"
-        #     ),
-        #     parse_mode="Markdown",
-        # )
         # Enviar audio de bienvenida
         try:
             with open('Si, eres.mp3', 'rb') as audio_file:
@@ -64,6 +72,7 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 chat_id=update.effective_chat.id,
                 text="⚠️ Audio de bienvenida no encontrado."
             )
+
 
 async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Responde a mensajes con audios si contienen palabras clave."""
@@ -133,5 +142,6 @@ application.add_handler(CommandHandler("matar", broma_muerte))
 application.add_error_handler(error_handler)
 
 # Ejecutar el bot
+# Ejecutar el bot
 if __name__ == "__main__":
-    application.run_polling()
+    application.run_polling(before_start=cargar_miembros_existentes(application))
