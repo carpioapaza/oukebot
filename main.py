@@ -20,10 +20,8 @@ AUDIOS = {
     "glogloglo": "audios/glogloglo.mp3",
     "sisoy": "audios/sisoy.mp3",
     "relaxo": "audios/relaxo.mp3",
-    "melo": "audios/chumbi.mp3",
+    "melo": "audios/chumbi.mp3"
 }
-
-miembros_existentes = set()
 
 # Funciones auxiliares
 def obtener_saludo() -> str:
@@ -35,34 +33,26 @@ def obtener_saludo() -> str:
         return "🌚 Bueeeena, mi queriidx"
 
 # Handlers
-async def cargar_miembros_existentes(application):
-    """Carga los IDs de los miembros existentes al iniciar el bot."""
-    global miembros_existentes
-    chat_id = "<ID_DEL_GRUPO>"  # Reemplaza con el ID del grupo donde está el bot
-    try:
-        chat_members = await application.bot.get_chat_administrators(chat_id)
-        miembros_existentes = {member.user.id for member in chat_members}
-        print(f"Miembros existentes cargados: {miembros_existentes}")
-    except Exception as e:
-        print(f"Error al cargar miembros existentes: {e}")
-
 async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Envía un mensaje de bienvenida a los nuevos miembros del grupo."""
     for nuevo in update.message.new_chat_members:
-        if nuevo.id in miembros_existentes:
-            continue  # Evitar saludar a miembros ya registrados
-
-        # Registrar al nuevo miembro en la lista
-        miembros_existentes.add(nuevo.id)
-
         username = f"@{nuevo.username}" if nuevo.username else nuevo.first_name
         saludo = obtener_saludo()
-
+        
         # Mensajes de bienvenida
         await context.bot.send_message(
             chat_id=update.effective_chat.id,
             text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
         )
+        # await context.bot.send_message(
+        #     chat_id=update.effective_chat.id,
+        #     text=(
+        #         "⚠️ *IMPORTANTE: ¡Uno para todos y todos para uno!.* ⚠️\n\n"
+        #         "❌ NO Contenido pornográfico, ricou 🍆\n"
+        #         "❌ NO spamees pa tu grupo pes 😠\n\n"
+        #     ),
+        #     parse_mode="Markdown",
+        # )
         # Enviar audio de bienvenida
         try:
             with open('Si, eres.mp3', 'rb') as audio_file:
@@ -133,22 +123,16 @@ async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 # Configuración de la aplicación
-async def main():
-    application = ApplicationBuilder().token(TOKEN).build()
+application = ApplicationBuilder().token(TOKEN).build()
 
-    # Cargar miembros existentes
-    await cargar_miembros_existentes(application)
+# Registro de handlers
+application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, bienvenida))
+application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido))
+application.add_handler(CommandHandler("matar", broma_muerte))
 
-    # Registro de handlers
-    application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, bienvenida))
-    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido))
-    application.add_handler(CommandHandler("matar", broma_muerte))
+# Registro de manejador de errores
+application.add_error_handler(error_handler)
 
-    # Registro de manejador de errores
-    application.add_error_handler(error_handler)
-
-    # Ejecutar el bot
-    await application.run_polling()
-
+# Ejecutar el bot
 if __name__ == "__main__":
-    asyncio.run(main())
+    application.run_polling()
