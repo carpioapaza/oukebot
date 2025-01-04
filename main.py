@@ -28,58 +28,54 @@ def obtener_saludo() -> str:
     """Obtiene un saludo dependiendo de la hora actual."""
     hora_actual = datetime.now().hour
     if 6 <= hora_actual < 18:
-        return "🌞 Bueeeena, mi queriidx"
+        return "🌞 Bueeeena, mi queriiiidx"
     else:
-        return "🌚 Bueeeena, mi queriidx"
+        return "🌚 Bueeeena, mi queriiiidx"
 
 # Handlers
 async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Envía un mensaje de bienvenida a los nuevos miembros del grupo."""
-    for nuevo in update.message.new_chat_members:
-        username = f"@{nuevo.username}" if nuevo.username else nuevo.first_name
-        saludo = obtener_saludo()
-        
-        # Mensajes de bienvenida
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
-        )
-        # await context.bot.send_message(
-        #     chat_id=update.effective_chat.id,
-        #     text=(
-        #         "⚠️ *IMPORTANTE: ¡Uno para todos y todos para uno!.* ⚠️\n\n"
-        #         "❌ NO Contenido pornográfico, ricou 🍆\n"
-        #         "❌ NO spamees pa tu grupo pes 😠\n\n"
-        #     ),
-        #     parse_mode="Markdown",
-        # )
-        # Enviar audio de bienvenida
-        try:
-            with open('Si, eres.mp3', 'rb') as audio_file:
-                await context.bot.send_audio(
-                    chat_id=update.effective_chat.id,
-                    audio=audio_file
-                )
-        except FileNotFoundError:
+    if update.message and update.message.new_chat_members:
+        for nuevo in update.message.new_chat_members:
+            username = f"@{nuevo.username}" if nuevo.username else nuevo.first_name
+            saludo = obtener_saludo()
+            
+            # Mensajes de bienvenida
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text="⚠️ Audio de bienvenida no encontrado."
+                text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
             )
+            
+            # Enviar audio de bienvenida
+            try:
+                with open('Si, eres.mp3', 'rb') as audio_file:
+                    await context.bot.send_audio(
+                        chat_id=update.effective_chat.id,
+                        audio=audio_file
+                    )
+            except FileNotFoundError:
+                await context.bot.send_message(
+                    chat_id=update.effective_chat.id,
+                    text="⚠️ Audio de bienvenida no encontrado."
+                )
 
 async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Responde a mensajes con audios si contienen palabras clave."""
-    mensaje = update.message.text.lower()
+    if update.message and update.message.text:  # Verificar que el mensaje no sea None
+        mensaje = update.message.text.lower()
 
-    for palabra, archivo in AUDIOS.items():
-        if palabra in mensaje:
-            try:
-                with open(archivo, 'rb') as audio:
-                    await context.bot.send_audio(chat_id=update.effective_chat.id, audio=audio)
-                return
-            except FileNotFoundError:
-                await update.message.reply_text(f"🔊 El archivo '{archivo}' no se encontró.")
-            except Exception as e:
-                await update.message.reply_text(f"❌ Error al enviar el audio: {e}")
+        for palabra, archivo in AUDIOS.items():
+            if palabra in mensaje:
+                try:
+                    with open(archivo, 'rb') as audio:
+                        await context.bot.send_audio(chat_id=update.effective_chat.id, audio=audio)
+                    return
+                except FileNotFoundError:
+                    await update.message.reply_text(f"🔊 El archivo '{archivo}' no se encontró.")
+                except Exception as e:
+                    await update.message.reply_text(f"❌ Error al enviar el audio: {e}")
+    else:
+        print("El mensaje no contiene texto o es None.")
 
 async def broma_muerte(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Simula la muerte del bot y lo reanima después de 24 horas."""
@@ -116,11 +112,13 @@ async def broma_muerte(update: Update, context: ContextTypes.DEFAULT_TYPE):
 async def error_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Manejo de errores global."""
     print(f"Error encontrado: {context.error}")
-    if update and update.effective_chat:
-        await context.bot.send_message(
-            chat_id=update.effective_chat.id,
-            text="⚠️ Ocurrió un error inesperado. Por favor, inténtalo de nuevo."
-        )
+    if update:
+        print(f"Tipo de actualización: {type(update)}")
+        if update.effective_chat:
+            await context.bot.send_message(
+                chat_id=update.effective_chat.id,
+                text="⚠️ Ocurrió un error inesperado. Por favor, inténtalo de nuevo."
+            )
 
 # Configuración de la aplicación
 application = ApplicationBuilder().token(TOKEN).build()
