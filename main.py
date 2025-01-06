@@ -43,7 +43,7 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Mensajes de bienvenida
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=f"{saludo} {username}! 🧮🏳️‍🌈🧮"
+                text=f"{saludo} {username}! 🦭🏳️‍🌈🦜"
             )
 
             # Enviar audio de bienvenida
