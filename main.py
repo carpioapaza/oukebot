@@ -39,13 +39,13 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
         for nuevo in update.message.new_chat_members:
             username = f"@{nuevo.username}" if nuevo.username else nuevo.first_name
             saludo = obtener_saludo()
-            
+
             # Mensajes de bienvenida
             await context.bot.send_message(
                 chat_id=update.effective_chat.id,
-                text=f"{saludo} {username}! 🦭🏳️‍🌈🦭"
+                text=f"{saludo} {username}! 🧮🏳️‍🌈🧮"
             )
-            
+
             # Enviar audio de bienvenida
             try:
                 with open('Si, eres.mp3', 'rb') as audio_file:
@@ -58,6 +58,25 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     chat_id=update.effective_chat.id,
                     text="⚠️ Audio de bienvenida no encontrado."
                 )
+
+async def notificar_salida(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Notifica cuando un usuario abandona el grupo."""
+    if update.message and update.message.left_chat_member:
+        usuario = update.message.left_chat_member
+        username = f"@{usuario.username}" if usuario.username else usuario.first_name
+
+        # Obtener administradores del grupo
+        administradores = await context.bot.get_chat_administrators(update.effective_chat.id)
+
+        # Notificar solo a administradores y al dueño
+        for admin in administradores:
+            try:
+                await context.bot.send_message(
+                    chat_id=admin.user.id,
+                    text=f"⚠️ El usuario {username} ha abandonado el grupo."
+                )
+            except Exception as e:
+                print(f"No se pudo notificar a {admin.user.id}: {e}")
 
 async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Responde a mensajes con audios si contienen palabras clave."""
@@ -95,7 +114,7 @@ async def broma_muerte(update: Update, context: ContextTypes.DEFAULT_TYPE):
     # Mensaje de "muerte"
     await context.bot.send_message(
         chat_id=chat_id,
-        text="De tanto ingreso de dibujitos, el oño-bot no pudo más... y ha muerto. 🦭🦭💀 MEEEEEEE\n\n",
+        text="De tanto ingreso de dibujitos, el oño-bot no pudo más... y ha muerto. 🧮🧮💀 MEEEEEEE\n\n",
         parse_mode="Markdown"
     )
 
@@ -125,6 +144,7 @@ application = ApplicationBuilder().token(TOKEN).build()
 
 # Registro de handlers
 application.add_handler(MessageHandler(filters.StatusUpdate.NEW_CHAT_MEMBERS, bienvenida))
+application.add_handler(MessageHandler(filters.StatusUpdate.LEFT_CHAT_MEMBER, notificar_salida))
 application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, responder_contenido))
 application.add_handler(CommandHandler("matar", broma_muerte))
 
