@@ -60,23 +60,26 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 )
 
 async def notificar_salida(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Notifica cuando un usuario abandona el grupo."""
+    """Notifica a los administradores y al dueño cuando un usuario abandona el grupo."""
     if update.message and update.message.left_chat_member:
-        usuario = update.message.left_chat_member
-        username = f"@{usuario.username}" if usuario.username else usuario.first_name
+        usuario_salido = update.message.left_chat_member
+        usuario_nombre = f"@{usuario_salido.username}" if usuario_salido.username else usuario_salido.first_name
 
-        # Obtener administradores del grupo
-        administradores = await context.bot.get_chat_administrators(update.effective_chat.id)
+        try:
+            # Obtener los administradores del grupo
+            administradores = await context.bot.get_chat_administrators(chat_id=update.effective_chat.id)
 
-        # Notificar solo a administradores y al dueño
-        for admin in administradores:
-            try:
-                await context.bot.send_message(
-                    chat_id=admin.user.id,
-                    text=f"⚠️ El usuario {username} ha abandonado el grupo."
-                )
-            except Exception as e:
-                print(f"No se pudo notificar a {admin.user.id}: {e}")
+            # Notificar a cada administrador
+            for admin in administradores:
+                try:
+                    await context.bot.send_message(
+                        chat_id=admin.user.id,
+                        text=f"⚠️ El usuario {usuario_nombre} ha abandonado el grupo {update.effective_chat.title}.",
+                    )
+                except Exception as e:
+                    print(f"No se pudo notificar al admin {admin.user.username}: {e}")
+        except Exception as e:
+            print(f"Error al obtener la lista de administradores: {e}")
 
 async def responder_contenido(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Responde a mensajes con audios si contienen palabras clave."""
