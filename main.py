@@ -123,7 +123,7 @@ async def broma_muerte(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
     # Simular espera de 24 horas
-    await asyncio.sleep(24 * 60 * 60)
+    await asyncio.sleep(1 * 60 * 60)
 
     # Mensaje de reactivación
     await context.bot.send_message(
