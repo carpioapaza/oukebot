@@ -21,7 +21,8 @@ AUDIOS = {
     "sisoy": "audios/sisoy.mp3",
     "relaxo": "audios/relaxo.mp3",
     "melo": "audios/chumbi.mp3",
-    "tomeseñora": "audios/tomeseño.mp3"
+    "tomeseñora": "audios/tomeseño.mp3",
+    "puno": "audios/puno.mp3"
 }
 
 # Funciones auxiliares
