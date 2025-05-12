@@ -23,7 +23,8 @@ AUDIOS = {
     "melo": "audios/chumbi.mp3",
     "tomeseñora": "audios/tomeseño.mp3",
     "puno": "audios/estao.mp3",
-    "atrapada": "audios/atrapada.mp3"
+    "atrapada": "audios/atrapada.mp3",
+    "rancho": "audios/bajederanch.mp3"
 }
 
 # Funciones auxiliares
@@ -51,7 +52,7 @@ async def bienvenida(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
             # Enviar audio de bienvenida
             try:
-                with open('Si, eres.mp3', 'rb') as audio_file:
+                with open('bajederanch.mp3', 'rb') as audio_file:
                     await context.bot.send_audio(
                         chat_id=update.effective_chat.id,
                         audio=audio_file
